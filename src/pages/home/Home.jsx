@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Grid2 as Grid, Container, Paper } from "@mui/material";
 import StatsCards from "./StatsCards";
-import axios from "../../services/api";
+//import axios from "../../services/api";
+import axios from "axios";
 import { Line } from "react-chartjs-2";
 
 export default function Home() {
