@@ -2,30 +2,30 @@ import React, { useState } from "react";
 
 const CreateEventPage = () => {
   const [city, setCity] = useState("");
-  const [time, setTime] = useState("");
+  const [date, setDate] = useState("");
+
+  const userId = "8b6ad701-ef1f-405e-8366-ad0a99344559"; 
 
   const handleCreateEvent = async () => {
-    if (!city || !time) {
-      alert("Please fill in both the city name and time!");
+    if (!city || !date) {
+      alert("Please fill in both the city name and date!");
       return;
     }
 
     try {
-      // Example API call to create an event
       const response = await fetch("http://localhost:8080/events", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ city, time }),
+        body: JSON.stringify({ city, date, userId }),
       });
 
       if (response.ok) {
         alert("Event created successfully!");
-        // Redirect to the Events page or clear the form
         setCity("");
-        setTime("");
-        window.location.href = "/events"; // Redirect to the Events page
+        setDate("");
+        window.location.href = "/events";
       } else {
         const errorData = await response.json();
         alert(`Failed to create event: ${errorData.message}`);
@@ -35,6 +35,7 @@ const CreateEventPage = () => {
       alert("An error occurred while creating the event.");
     }
   };
+
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
@@ -57,11 +58,11 @@ const CreateEventPage = () => {
         />
       </div>
       <div style={{ marginBottom: "20px" }}>
-        <label style={{ display: "block", marginBottom: "5px" }}>Event Time:</label>
+        <label style={{ display: "block", marginBottom: "5px" }}>Event Date:</label>
         <input
-          type="datetime-local"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
           style={{
             width: "100%",
             padding: "10px",
