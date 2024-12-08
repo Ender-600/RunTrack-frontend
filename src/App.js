@@ -6,6 +6,9 @@ import Navbar from "./components/Navbar";
 import PrivateRoute from "./features/auth/PrivateRoute";
 import ShopPage from "./pages/shop/ShopPage";
 import Run from "./pages/run/Run";
+import EventPage from "./pages/EventPage/EventPage";
+import CreateEventPage from "./pages/CreateEventPage";
+
 
 function App() {
   const [value, setValue] = React.useState(0);
@@ -27,6 +30,8 @@ function App() {
           path="/run"
           element={<Run/>}
         />
+        <Route path="/events" element={<EventPage />} />
+        <Route path="/create-event" element={<CreateEventPage />} />
       </Routes>
       <Navbar value={value} onChange={setValue} />
     </Router>
