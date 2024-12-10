@@ -8,7 +8,7 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import api from "../../services/api"; // 导入 api 实例
+import { loginUser, registerUser } from "../../services/api"; // 使用刚定义的函数
 
 export default function LoginRegister() {
   const [tab, setTab] = useState(0); // 0 = Login, 1 = Register
@@ -37,32 +37,44 @@ export default function LoginRegister() {
   };
 
   const handleSubmit = async () => {
-    const url = tab === 0 ? "/api/auth/login" : "/api/auth/register";
-
-    // 发送表单数据到后端
     try {
-      const requestData =
-          tab === 0
-              ? { firstName: formData.firstName, lastName: formData.lastName, password: formData.password }
-              : formData;
-
-      const response = await api.post(url, requestData);
-      alert(response.data.message || "Success");
-
       if (tab === 0) {
-        localStorage.setItem("userId", response.data.userId); // 保存登录用户的 ID
-        navigate("/home");
+        // 登录逻辑
+        const { email, password } = formData;
+        const response = await loginUser(email, password);
+
+        // 检查响应是否正确
+        if (response.status === 200 && response.data.email) {
+          alert(response.data.message || "Login successful");
+          localStorage.setItem("email", response.data.email); // 保存 email
+          navigate("/profile"); // 跳转到 Profile 页面
+        } else {
+          alert("Invalid server response");
+        }
       } else {
-        setTab(0); // 注册成功后切换到登录页面
+        // 注册逻辑
+        const { firstName, lastName, email, phoneNumber, password } = formData;
+        const response = await registerUser({ firstName, lastName, email, phoneNumber, password });
+
+        if (response.status === 200) {
+          alert(response.data.message || "Register successful");
+          setTab(0); // 切换到登录页面
+        } else {
+          alert("Invalid server response");
+        }
       }
     } catch (error) {
-      if (error.response && error.response.data) {
+      if (error.response) {
+        // 显示后端返回的错误信息
         alert(error.response.data.message || "Error occurred");
       } else {
-        alert("An error occurred. Please try again.");
+        // 网络错误或其他问题
+        alert("An error occurred. Please check your network connection.");
       }
     }
   };
+
+
 
   return (
       <Paper
@@ -113,6 +125,7 @@ export default function LoginRegister() {
                     margin="normal"
                     value={formData.email}
                     onChange={handleChange}
+                    required
                 />
                 <TextField
                     label="Phone Number"
@@ -128,20 +141,11 @@ export default function LoginRegister() {
           {tab === 0 && (
               <>
                 <TextField
-                    label="First Name"
-                    name="firstName"
+                    label="Email"
+                    name="email"
                     fullWidth
                     margin="normal"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    required
-                />
-                <TextField
-                    label="Last Name"
-                    name="lastName"
-                    fullWidth
-                    margin="normal"
-                    value={formData.lastName}
+                    value={formData.email}
                     onChange={handleChange}
                     required
                 />
