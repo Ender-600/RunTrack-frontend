@@ -102,9 +102,9 @@ const EventPage = () => {
                 }}
               >
                 {/* Updated to use 'location' instead of 'city' */}
-                <h3>Event in {event.location}</h3>
+                <h3>Event in {event.city}</h3>
                 <p>
-                  <strong>Location:</strong> {event.location}
+                  <strong>Location:</strong> {event.city}
                 </p>
                 <p>
                   <strong>Date:</strong> {event.date}

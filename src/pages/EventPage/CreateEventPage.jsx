@@ -119,7 +119,7 @@ const EventPage = () => {
         </button>
       </div>
 
-      {/* Button to Show Events */}
+      {/* Button to Show Events
       <button
         onClick={handleShowEvents}
         style={{
@@ -133,9 +133,9 @@ const EventPage = () => {
         }}
       >
         Show Events
-      </button>
+      </button> */}
 
-      {/* Render Fetched Events */}
+      {/* Render Fetched Events
       <div style={{ marginTop: "20px" }}>
         {fetchedEvents.length > 0 ? (
           <ul style={{ listStyleType: "none", padding: 0 }}>
@@ -161,8 +161,8 @@ const EventPage = () => {
           </ul>
         ) : (
           <p>No events found</p>
-        )}
-      </div>
+        )} */}
+      {/* </div> */}
     </div>
   );
 };
