@@ -10,17 +10,6 @@ const api = axios.create({
 export default api;
 
 
-export const updateUserProfile = async (email, userData) => {
-  try {
-    const response = await api.put(`/api/users/profile?email=${email}`, userData);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating user profile:", error);
-    throw error;
-  }
-};
-
-
 export const loginUser = async (email, password) => {
   try {
     const response = await api.post("/api/users/login", null, {
@@ -50,3 +39,26 @@ export const getUserProfile = async (email) => {
   }
 };
 
+export const getUserById = async (userId) => {
+  console.log("Fetching userssssss...");
+  const response = await api.get(`/api/users/${userId}`);
+  console.log(response);
+  return response.data;
+};
+
+export const updateUserProfile = async (userId, userData) => {
+  console.log("UserData:", userData);
+  const response = await api.put(`/api/users/${userId}`, userData);
+  return response.data;
+};
+
+export const deleteUser = async (userId) => {
+  try {
+    const response = await api.delete(`/api/users/${userId}`);
+    console.log("User deleted successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw error;
+  }
+};

@@ -47,6 +47,7 @@ export default function LoginRegister() {
         const data = await loginUser(email, password); // 调用 loginUser API
         alert(data.message || "Login successful");
         localStorage.setItem("email", email); // 将 email 存储到 localStorage
+        localStorage.setItem("userId", data.userId);
         navigate("/profile"); // 登录成功后跳转到 profile 页面
       } else { // Register logic
         const { firstName, lastName, email, phoneNumber, password } = formData;
