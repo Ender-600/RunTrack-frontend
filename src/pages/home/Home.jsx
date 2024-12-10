@@ -11,7 +11,7 @@ export default function Home() {
   
     useEffect(() => {
       axios
-        .get(`/run-sessions/user/${userId}/all-stats`)
+        .get(`/api/run-sessions/user/${userId}/all-stats`)
         .then((response) => setWeeklyStats(response.data))
         .catch((error) => console.error("Error fetching stats:", error));
     }, [userId]);
