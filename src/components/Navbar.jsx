@@ -4,6 +4,7 @@ import { BottomNavigation, BottomNavigationAction } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import EventIcon from "@mui/icons-material/Event";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun"; // 跑步图标
 
 const Navbar = ({ value, onChange }) => {
@@ -22,6 +23,9 @@ const Navbar = ({ value, onChange }) => {
         navigate("/shop"); // 跳转到购物车页面
         break;
       case 3:
+        navigate("/events"); // Navigate to the Events page
+        break;
+      case 4:
         navigate("/profile"); // 跳转到个人页面
         break;
       default:
@@ -44,6 +48,7 @@ const Navbar = ({ value, onChange }) => {
       <BottomNavigationAction label="Home" icon={<HomeIcon />} />
       <BottomNavigationAction label="Run" icon={<DirectionsRunIcon />} />
       <BottomNavigationAction label="Cart" icon={<ShoppingCartIcon />} />
+      <BottomNavigationAction label="Events" icon={<EventIcon />} /> 
       <BottomNavigationAction label="Profile" icon={<PersonIcon />} />
     </BottomNavigation>
   );
