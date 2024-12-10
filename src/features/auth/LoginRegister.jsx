@@ -38,41 +38,33 @@ export default function LoginRegister() {
 
   const handleSubmit = async () => {
     try {
-      if (tab === 0) {
-        // 登录逻辑
+      if (tab === 0) { // Login logic
         const { email, password } = formData;
-        const response = await loginUser(email, password);
-
-        // 检查响应是否正确
-        if (response.status === 200 && response.data.email) {
-          alert(response.data.message || "Login successful");
-          localStorage.setItem("email", response.data.email); // 保存 email
-          navigate("/profile"); // 跳转到 Profile 页面
-        } else {
-          alert("Invalid server response");
+        if (!email || !password) {
+          alert("Please enter both email and password.");
+          return;
         }
-      } else {
-        // 注册逻辑
+        const data = await loginUser(email, password); // 调用 loginUser API
+        alert(data.message || "Login successful");
+        localStorage.setItem("email", email); // 将 email 存储到 localStorage
+        navigate("/profile"); // 登录成功后跳转到 profile 页面
+      } else { // Register logic
         const { firstName, lastName, email, phoneNumber, password } = formData;
-        const response = await registerUser({ firstName, lastName, email, phoneNumber, password });
-
-        if (response.status === 200) {
-          alert(response.data.message || "Register successful");
-          setTab(0); // 切换到登录页面
-        } else {
-          alert("Invalid server response");
-        }
+        const data = await registerUser({ firstName, lastName, email, phoneNumber, password });
+        alert(data.message || "Register successful");
+        setTab(0); // 注册成功后切换到登录 tab
       }
     } catch (error) {
-      if (error.response) {
-        // 显示后端返回的错误信息
-        alert(error.response.data.message || "Error occurred");
+      if (error.response && error.response.data) {
+        alert(error.response.data.message || "An error occurred");
       } else {
-        // 网络错误或其他问题
-        alert("An error occurred. Please check your network connection.");
+        alert("An error occurred. Please try again.");
       }
     }
   };
+
+
+
 
 
 

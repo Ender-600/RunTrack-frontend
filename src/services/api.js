@@ -21,13 +21,15 @@ export const updateUserProfile = async (email, userData) => {
 };
 
 
-// 登录请求
 export const loginUser = async (email, password) => {
   try {
-    const response = await api.post("/api/users/login", { email, password });
-    return response;
+    const response = await api.post("/api/users/login", null, {
+      params: { email, password }, // 将 email 和 password 作为查询参数发送
+    });
+    return response.data;
   } catch (error) {
-    throw error; // 抛出错误让调用方处理
+    console.error("Login failed:", error);
+    throw error;
   }
 };
 
