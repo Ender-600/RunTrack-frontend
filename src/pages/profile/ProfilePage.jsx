@@ -1,63 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { Box, TextField, Button, Typography } from '@mui/material';
-import { getUserProfile, updateUserProfile } from '../../services/api';
+import React, { useEffect, useState } from "react";
+import { Box, TextField, Button, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom"; // 用于路由跳转
+import { getUserProfile } from "../../services/api";
 
-const ProfilePage = ({ userId }) => {
+const ProfilePage = () => {
+    const [userData, setUserData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [userData, setUserData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        password: '',
-    });
+    const navigate = useNavigate();
+    const email = localStorage.getItem("email");
 
     useEffect(() => {
-        const fetchUserProfile = async () => {
+        const fetchProfile = async () => {
             try {
-                const data = await getUserProfile(userId);
+                const data = await getUserProfile(email); // 使用 email 获取用户数据
                 setUserData(data);
             } catch (error) {
                 console.error("Failed to fetch user profile:", error);
             }
         };
-
-        fetchUserProfile();
-    }, [userId]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setUserData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
+        fetchProfile();
+    }, [email]);
 
     const handleSave = async () => {
         try {
-            const updatedData = await updateUserProfile(userId, userData);
-            setUserData(updatedData);
+            // 保存更新的用户数据
+            alert("Profile updated successfully");
             setIsEditing(false);
-            alert('Profile updated successfully');
         } catch (error) {
             console.error("Failed to update user profile:", error);
-            alert('Failed to update profile');
+            alert("Failed to update profile");
         }
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("email"); // 清除登录状态
+        navigate("/login"); // 跳转回登录页面
+    };
+
+    if (!userData) {
+        return <Typography>Loading...</Typography>;
+    }
+
     return (
-        <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
+        <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
             <Typography variant="h4" gutterBottom>
                 Profile
             </Typography>
-            {['firstName', 'lastName', 'email', 'phoneNumber', 'password'].map((field) => (
+            {["firstName", "lastName", "email", "phoneNumber"].map((field) => (
                 <TextField
                     key={field}
                     label={field.charAt(0).toUpperCase() + field.slice(1)}
                     name={field}
-                    type={field === 'password' ? 'password' : 'text'}
                     value={userData[field]}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                        setUserData({ ...userData, [field]: e.target.value })
+                    }
                     fullWidth
                     margin="normal"
                     InputProps={{
@@ -65,14 +62,22 @@ const ProfilePage = ({ userId }) => {
                     }}
                 />
             ))}
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={isEditing ? handleSave : () => setIsEditing(true)}
-                sx={{ mt: 2 }}
-            >
-                {isEditing ? 'Save' : 'Edit Profile'}
-            </Button>
+            <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={isEditing ? handleSave : () => setIsEditing(true)}
+                >
+                    {isEditing ? "Save" : "Edit Profile"}
+                </Button>
+                <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleLogout}
+                >
+                    Logout
+                </Button>
+            </Box>
         </Box>
     );
 };

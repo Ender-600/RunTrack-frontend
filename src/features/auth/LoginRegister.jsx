@@ -8,7 +8,7 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import api from "../../services/api"; // 导入 api 实例
+import { loginUser, registerUser } from "../../services/api"; // 使用刚定义的函数
 
 export default function LoginRegister() {
   const [tab, setTab] = useState(0); // 0 = Login, 1 = Register
@@ -37,32 +37,36 @@ export default function LoginRegister() {
   };
 
   const handleSubmit = async () => {
-    const url = tab === 0 ? "/api/auth/login" : "/api/auth/register";
-
-    // 发送表单数据到后端
     try {
-      const requestData =
-          tab === 0
-              ? { firstName: formData.firstName, lastName: formData.lastName, password: formData.password }
-              : formData;
-
-      const response = await api.post(url, requestData);
-      alert(response.data.message || "Success");
-
-      if (tab === 0) {
-        localStorage.setItem("userId", response.data.userId); // 保存登录用户的 ID
-        navigate("/home");
-      } else {
-        setTab(0); // 注册成功后切换到登录页面
+      if (tab === 0) { // Login logic
+        const { email, password } = formData;
+        if (!email || !password) {
+          alert("Please enter both email and password.");
+          return;
+        }
+        const data = await loginUser(email, password); // 调用 loginUser API
+        alert(data.message || "Login successful");
+        localStorage.setItem("email", email); // 将 email 存储到 localStorage
+        navigate("/profile"); // 登录成功后跳转到 profile 页面
+      } else { // Register logic
+        const { firstName, lastName, email, phoneNumber, password } = formData;
+        const data = await registerUser({ firstName, lastName, email, phoneNumber, password });
+        alert(data.message || "Register successful");
+        setTab(0); // 注册成功后切换到登录 tab
       }
     } catch (error) {
       if (error.response && error.response.data) {
-        alert(error.response.data.message || "Error occurred");
+        alert(error.response.data.message || "An error occurred");
       } else {
         alert("An error occurred. Please try again.");
       }
     }
   };
+
+
+
+
+
 
   return (
       <Paper
@@ -113,6 +117,7 @@ export default function LoginRegister() {
                     margin="normal"
                     value={formData.email}
                     onChange={handleChange}
+                    required
                 />
                 <TextField
                     label="Phone Number"
@@ -128,20 +133,11 @@ export default function LoginRegister() {
           {tab === 0 && (
               <>
                 <TextField
-                    label="First Name"
-                    name="firstName"
+                    label="Email"
+                    name="email"
                     fullWidth
                     margin="normal"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    required
-                />
-                <TextField
-                    label="Last Name"
-                    name="lastName"
-                    fullWidth
-                    margin="normal"
-                    value={formData.lastName}
+                    value={formData.email}
                     onChange={handleChange}
                     required
                 />
