@@ -65,7 +65,7 @@ export default function Home() {
 
   const userId = localStorage.getItem("userId");
   const startDate = "2022-01-01";
-  const endDate = "2024-12-31";
+  const endDate = "2025-12-31";
 
   useEffect(() => {
     axios
@@ -143,7 +143,7 @@ export default function Home() {
               <Paper elevation={3} sx={{ p: 2, mt: 2 }}>
                 {rankingData.TopRunners.map((runner, index) => (
                   <Typography key={index} variant="body1">
-                    {runner.FullName} (UserId: {runner.UserId}) - {runner.TotalDistance} km
+                    {runner.UserName} - {runner.TotalDistance} km
                   </Typography>
                 ))}
               </Paper>
@@ -169,7 +169,7 @@ export default function Home() {
               <Paper elevation={3} sx={{ p: 2, mt: 2 }}>
                 {rankingData.RecentPurchases.map((purchase, index) => (
                   <Typography key={index} variant="body1">
-                    {purchase.ProductName} (ID: {purchase.ProductId}) - {purchase.ProductPrice} USD
+                    {purchase.ProductName} - {purchase.ProductPrice} USD
                   </Typography>
                 ))}
               </Paper>
