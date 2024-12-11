@@ -8,25 +8,27 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import api from "../../services/api"; // 导入 api 实例
+import { loginUser, registerUser } from "../../services/api"; // 使用刚定义的函数
 
 export default function LoginRegister() {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(0); // 0 = Login, 1 = Register
   const [formData, setFormData] = useState({
-    userId: "",
     firstName: "",
     lastName: "",
     password: "",
+    email: "",
+    phoneNumber: "",
   });
   const navigate = useNavigate();
 
   const handleTabChange = (event, newValue) => {
     setTab(newValue);
     setFormData({
-      userId: "",
       firstName: "",
       lastName: "",
       password: "",
+      email: "",
+      phoneNumber: "",
     });
   };
 
@@ -35,98 +37,135 @@ export default function LoginRegister() {
   };
 
   const handleSubmit = async () => {
-    const url = tab === 0 ? "/api/auth/login" : "/api/auth/register";
-
     try {
-      const response = await api.post(url, formData);
-      alert(response.data.message || "Success");
-
-      if (tab === 0) {
-        localStorage.setItem("userId", formData.userId); // 保存登录用户的 ID
+      if (tab === 0) { // Login logic
+        const { email, password } = formData;
+        if (!email || !password) {
+          alert("Please enter both email and password.");
+          return;
+        }
+        const data = await loginUser(email, password); // 调用 loginUser API
+        alert(data.message || "Login successful");
+        localStorage.setItem("email", email); // 将 email 存储到 localStorage
+        localStorage.setItem("userId", data.userId);
+        navigate("/profile"); // 登录成功后跳转到 profile 页面
+      } else { // Register logic
+        const { firstName, lastName, email, phoneNumber, password } = formData;
+        const data = await registerUser({ firstName, lastName, email, phoneNumber, password });
+        alert(data.message || "Register successful");
+        setTab(0); // 注册成功后切换到登录 tab
       }
-
-      navigate("/home");
     } catch (error) {
       if (error.response && error.response.data) {
-        alert(error.response.data.message || "Error occurred");
+        alert(error.response.data.message || "An error occurred");
       } else {
         alert("An error occurred. Please try again.");
       }
     }
   };
 
+
+
+
+
+
   return (
-    <Paper
-      elevation={3}
-      style={{
-        padding: "20px",
-        maxWidth: "400px",
-        margin: "auto",
-        marginTop: "50px",
-      }}
-    >
-      <Tabs
-        value={tab}
-        onChange={handleTabChange}
-        indicatorColor="primary"
-        textColor="primary"
-        variant="fullWidth"
+      <Paper
+          elevation={3}
+          style={{
+            padding: "20px",
+            maxWidth: "400px",
+            margin: "auto",
+            marginTop: "50px",
+          }}
       >
-        <Tab label="Login" />
-        <Tab label="Register" />
-      </Tabs>
-
-      <Box mt={3}>
-        <TextField
-          label="User ID"
-          name="userId"
-          fullWidth
-          margin="normal"
-          value={formData.userId}
-          onChange={handleChange}
-        />
-
-        {tab === 1 && (
-          <>
-            <TextField
-              label="First Name"
-              name="firstName"
-              fullWidth
-              margin="normal"
-              value={formData.firstName}
-              onChange={handleChange}
-            />
-            <TextField
-              label="Last Name"
-              name="lastName"
-              fullWidth
-              margin="normal"
-              value={formData.lastName}
-              onChange={handleChange}
-            />
-          </>
-        )}
-
-        <TextField
-          label="Password"
-          name="password"
-          type="password"
-          fullWidth
-          margin="normal"
-          value={formData.password}
-          onChange={handleChange}
-        />
-
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={handleSubmit}
-          style={{ marginTop: "20px" }}
+        <Tabs
+            value={tab}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
         >
-          {tab === 0 ? "Login" : "Register"}
-        </Button>
-      </Box>
-    </Paper>
+          <Tab label="Login" />
+          <Tab label="Register" />
+        </Tabs>
+
+        <Box mt={3}>
+          {tab === 1 && (
+              <>
+                <TextField
+                    label="First Name"
+                    name="firstName"
+                    fullWidth
+                    margin="normal"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                />
+                <TextField
+                    label="Last Name"
+                    name="lastName"
+                    fullWidth
+                    margin="normal"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                />
+                <TextField
+                    label="Email"
+                    name="email"
+                    fullWidth
+                    margin="normal"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                />
+                <TextField
+                    label="Phone Number"
+                    name="phoneNumber"
+                    fullWidth
+                    margin="normal"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                />
+              </>
+          )}
+
+          {tab === 0 && (
+              <>
+                <TextField
+                    label="Email"
+                    name="email"
+                    fullWidth
+                    margin="normal"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                />
+              </>
+          )}
+
+          <TextField
+              label="Password"
+              name="password"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={formData.password}
+              onChange={handleChange}
+              required
+          />
+
+          <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleSubmit}
+              style={{ marginTop: "20px" }}
+          >
+            {tab === 0 ? "Login" : "Register"}
+          </Button>
+        </Box>
+      </Paper>
   );
 }

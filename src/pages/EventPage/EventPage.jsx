@@ -11,28 +11,31 @@ const EventPage = () => {
   };
 
   const handleShowEvents = async () => {
-    if (!city) {
+    if (!city.trim()) { // Trim to avoid spaces-only input
       alert("Please enter a city name!");
       return;
     }
-
+  
     try {
-      // Corrected fetch call to use the backend's /events/location endpoint
-      const response = await fetch(`http://localhost:8080/events/location?location=${city}`);
+      const response = await fetch(`http://localhost:8080/events/city?city=${encodeURIComponent(city.trim())}`);
       if (!response.ok) {
+        // Attempt to retrieve error details from the server
+        const errorDetails = await response.text();
+        console.error("Server Error Details:", errorDetails);
         throw new Error("Failed to fetch events");
       }
       const events = await response.json();
       if (events.length === 0) {
         alert("No events found for the given city.");
       } else {
-        setFetchedEvents(events); // Update the state with fetched events
+        setFetchedEvents(events);
       }
     } catch (error) {
       console.error("Error fetching events:", error);
       alert("An error occurred while fetching events.");
     }
   };
+
 
   return (
     <div style={{ padding: "20px" }}>
@@ -90,7 +93,7 @@ const EventPage = () => {
           <ul style={{ listStyleType: "none", padding: 0 }}>
             {fetchedEvents.map((event) => (
               <li
-                key={event.eventId} // Updated to use eventId as the unique key
+                key={event.eventId} // Ensure eventId is unique
                 style={{
                   marginBottom: "20px",
                   padding: "10px",
@@ -98,9 +101,10 @@ const EventPage = () => {
                   borderRadius: "5px",
                 }}
               >
-                <h3>{event.name}</h3>
+                {/* Updated to use 'location' instead of 'city' */}
+                <h3>Event in {event.city}</h3>
                 <p>
-                  <strong>City:</strong> {event.location}
+                  <strong>Location:</strong> {event.city}
                 </p>
                 <p>
                   <strong>Date:</strong> {event.date}
