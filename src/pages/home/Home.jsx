@@ -1,61 +1,14 @@
-// import React, { useEffect, useState } from "react";
-// import { Box, Typography, Grid2 as Grid, Container, Paper } from "@mui/material";
-// import StatsCards from "./StatsCards";
-// //import axios from "../../services/api";
-// import axios from "axios";
-// import { Line } from "react-chartjs-2";
-
-// export default function Home() {
-//     const [weeklyStats, setWeeklyStats] = useState(null);
-//     const userId = localStorage.getItem("userId"); // 从 Local Storage 获取用户 ID
-  
-//     useEffect(() => {
-//       axios
-//         .get(`/api/run-sessions/user/${userId}/all-stats`)
-//         .then((response) => setWeeklyStats(response.data))
-//         .catch((error) => console.error("Error fetching stats:", error));
-//     }, [userId]);
-  
-//     if (!weeklyStats) {
-//       return <Typography>Loading...</Typography>;
-//     }
-  
-//     return (
-//       <Container>
-//         <Typography variant="h4" sx={{ my: 4, textAlign: "center" }}>
-//           Welcome Back!
-//         </Typography>
-//         <StatsCards stats={weeklyStats} />
-  
-//         <Box sx={{ mt: 4 }}>
-//           <Typography variant="h6">Weekly Summary</Typography>
-//           <Paper elevation={3} sx={{ p: 2 }}>
-//             <Typography variant="body1">
-//               Total Distance: {weeklyStats.totalDistance || 0} km
-//             </Typography>
-//             <Typography variant="body1">
-//               Total Time: {weeklyStats.totalTime || 0} hours
-//             </Typography>
-//             <Typography variant="body1">
-//               Calories Burned: {weeklyStats.caloriesBurned || 0} kcal
-//             </Typography>
-//           </Paper>
-//         </Box>
-//       </Container>
-//     );
-//   }
-
 import React, { useEffect, useState } from "react";
 import { 
   Box, 
   Typography, 
   Button, 
   Container, 
-  Paper 
+  Paper, 
+  TextField 
 } from "@mui/material";
 import StatsCards from "./StatsCards";
 import axios from "axios";
-import { Line } from "react-chartjs-2";
 
 export default function Home() {
   const [weeklyStats, setWeeklyStats] = useState(null);
@@ -64,8 +17,8 @@ export default function Home() {
   const [rankingError, setRankingError] = useState(null);
 
   const userId = localStorage.getItem("userId");
-  const startDate = "2022-01-01";
-  const endDate = "2025-12-31";
+  const [startDate, setStartDate] = useState("2023-01-01"); 
+  const [endDate, setEndDate] = useState("2023-12-31");
 
   useEffect(() => {
     axios
@@ -103,7 +56,7 @@ export default function Home() {
   }
 
   return (
-    <Container>
+    <Container sx={{ pb: 16 /* Adjust as needed based on nav height */ }}>
       <Typography variant="h4" sx={{ my: 4, textAlign: "center" }}>
         Welcome Back!
       </Typography>
@@ -122,6 +75,24 @@ export default function Home() {
             Calories Burned: {weeklyStats.caloriesBurned || 0} kcal
           </Typography>
         </Paper>
+
+        {/* Date Inputs for start and end date */}
+        <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+          <TextField
+            label="Start Date"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="End Date"
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+          />
+        </Box>
 
         {/* Ranking Button */}
         <Button variant="contained" onClick={fetchRankingData} disabled={rankingLoading}>
