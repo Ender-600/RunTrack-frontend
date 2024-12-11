@@ -56,7 +56,7 @@ export default function Home() {
   }
 
   return (
-    <Container>
+    <Container sx={{ pb: 16 /* Adjust as needed based on nav height */ }}>
       <Typography variant="h4" sx={{ my: 4, textAlign: "center" }}>
         Welcome Back!
       </Typography>
